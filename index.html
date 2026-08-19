@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NCC Cadet Availability</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            font-family: Arial, sans-serif;
+
+            background: #f3f4f6;
+
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+
+            padding: 25px 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+
+            background: white;
+
+            padding: 25px 20px;
+
+            border-radius: 18px;
+
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin-top: 8px;
+            color: #666;
+            font-size: 15px;
+        }
+
+        label {
+            display: block;
+
+            margin-top: 18px;
+            margin-bottom: 7px;
+
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        select {
+            width: 100%;
+
+            padding: 14px;
+
+            font-size: 17px;
+
+            border: 1px solid #ccc;
+            border-radius: 10px;
+
+            background: white;
+        }
+
+        button {
+            width: 100%;
+
+            margin-top: 25px;
+
+            padding: 15px;
+
+            font-size: 17px;
+            font-weight: bold;
+
+            color: white;
+            background: #222;
+
+            border: none;
+            border-radius: 10px;
+
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 12px;
+        }
+
+        .results-header h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .count {
+            background: #222;
+            color: white;
+
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .cadet {
+            padding: 14px;
+
+            margin-bottom: 8px;
+
+            background: #f4f4f4;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .no-results {
+            margin-top: 30px;
+
+            padding: 20px;
+
+            text-align: center;
+
+            background: #f4f4f4;
+
+            border-radius: 10px;
+
+            color: #666;
+        }
+
+        @media (max-width: 400px) {
+
+            body {
+                padding: 15px 10px;
+            }
+
+            .container {
+                padding: 22px 16px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <div class="container">
+
+        <div class="header">
+
+            <h1>🪖 NCC Cadet Finder</h1>
+
+            <p>Find cadets available for a particular time</p>
+
+        </div>
+
+
+        <label for="day">
+            Select Day
+        </label>
+
+        <select id="day">
+
+            <option value="MON">Monday</option>
+            <option value="TUE">Tuesday</option>
+            <option value="WED">Wednesday</option>
+            <option value="THU">Thursday</option>
+            <option value="FRI">Friday</option>
+            <option value="SAT">Saturday</option>
+
+        </select>
+
+
+        <label for="half">
+            Select Half
+        </label>
+
+        <select id="half">
+
+            <option value="1">First Half</option>
+            <option value="2">Second Half</option>
+
+        </select>
+
+
+        <button onclick="findCadets()">
+            Find Available Cadets
+        </button>
+
+
+        <div id="results"></div>
+
+    </div>
+
+
+    <script>
+
+        const cadetinfo = {
+
+            "Abhinav Pathak": [
+                "TUE2",
+                "WED1",
+                "FRI1",
+                "SAT2"
+            ],
+
+            "Sri Karan M": [
+                "MON1",
+                "TUE2",
+                "FRI1",
+                "SAT2"
+            ],
+
+            "Kura Sreevardhan Reddy": [
+                "TUE1",
+                "WED2",
+                "THU1",
+                "SAT2"
+            ],
+
+            "Samahith M Rao": [
+                "WED1",
+                "THU2",
+                "FRI1",
+                "SAT2"
+            ],
+
+            "Dhriti H Shetty": [
+                "MON2",
+                "TUE2",
+                "WED1",
+                "THU2"
+            ],
+
+            "Aarushi R Jingade": [
+                "MON2",
+                "TUE1",
+                "THU1",
+                "SAT1"
+            ],
+
+            "Ankita Agarwal": [
+                "TUE1",
+                "WED2",
+                "THU1",
+                "FRI2"
+            ],
+
+            "Aryaman Sharma": [
+                "TUE2",
+                "WED1",
+                "THU2",
+                "FRI1"
+            ]
+
+        };
+
+
+        function findCadets() {
+
+            const day = document.getElementById("day").value;
+
+            const half = document.getElementById("half").value;
+
+            const required = day + half;
+
+            const freecadets = [];
+
+
+            for (const cadet in cadetinfo) {
+
+                if (cadetinfo[cadet].includes(required)) {
+
+                    freecadets.push(cadet);
+
+                }
+
+            }
+
+
+            const results = document.getElementById("results");
+
+
+            if (freecadets.length === 0) {
+
+                results.innerHTML = `
+                    <div class="no-results">
+                        No cadets are available for this time.
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            let html = `
+
+                <div class="results">
+
+                    <div class="results-header">
+
+                        <h2>Available Cadets</h2>
+
+                        <div class="count">
+                            ${freecadets.length}
+                        </div>
+
+                    </div>
+            `;
+
+
+            for (const cadet of freecadets) {
+
+                html += `
+                    <div class="cadet">
+                        ${cadet}
+                    </div>
+                `;
+
+            }
+
+
+            html += `</div>`;
+
+
+            results.innerHTML = html;
+
+        }
+
+    </script>
+
+</body>
+
+</html>
